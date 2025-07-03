@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,14 +10,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segura UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
+        
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -27,58 +26,57 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-
+        
         .header {
             background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
             padding: 20px;
             text-align: center;
         }
-
+        
         .section {
             padding: 20px;
             border-bottom: 1px solid #eee;
         }
-
+        
         .section:last-child {
             border-bottom: none;
         }
-
+        
         .section-title {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 15px;
             font-weight: 600;
             color: #2c3e50;
-            gap: 10px;
         }
-
+        
         .price-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
-
+        
         .price-input {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             width: 120px;
             text-align: center;
         }
-
+        
+        .percentage-input {
+            width: 80px;
+        }
+        
         .auto-update {
             background: #e8f5e8;
             border-color: #4CAF50;
         }
-
-        .manual-input {
-            background: #fff3e0;
-            border-color: #ff9800;
-        }
-
+        
         .refresh-btn {
             background: #4CAF50;
             color: white;
@@ -89,47 +87,58 @@
             font-size: 12px;
             transition: all 0.3s;
         }
-
+        
         .refresh-btn:hover {
             background: #45a049;
         }
-
+        
         .refresh-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-
-        .calc-result {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
+        
+        .reset-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
         }
-
-        .final-rate {
+        
+        .reset-btn:hover {
+            background: #ff5252;
+        }
+        
+        .fixed-rate-result {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            margin: 15px 0;
+            margin: 20px 0;
         }
-
+        
         .rate-display {
             font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
         }
-
-        .format-display {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 18px;
-            margin: 10px 0;
+        
+        .operation-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
         }
-
+        
+        .operation-result div {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
         .copy-btn {
             background: #ff6b6b;
             color: white;
@@ -138,164 +147,179 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
+            margin: 5px;
             transition: all 0.3s;
         }
-
+        
         .copy-btn:hover {
             background: #ff5252;
         }
-
+        
+        .copy-btn.secondary {
+            background: #2196F3;
+        }
+        
+        .copy-btn.secondary:hover {
+            background: #1976D2;
+        }
+        
         .competitor-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-
+        
         .competitor-table th,
         .competitor-table td {
-            padding: 8px 12px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
+        
         .competitor-table th {
             background: #f8f9fa;
             font-weight: 600;
         }
-
+        
         .your-rate {
             background: #e8f5e8 !important;
             font-weight: bold;
         }
-
+        
         .better {
             color: #4CAF50;
         }
-
+        
         .worse {
             color: #f44336;
         }
-
+        
         .status {
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 12px;
             font-weight: bold;
         }
-
+        
         .online {
             background: #e8f5e8;
             color: #4CAF50;
         }
-
+        
         .updating {
             background: #fff3e0;
             color: #ff9800;
         }
-
+        
         .error {
             background: #ffebee;
             color: #f44336;
         }
-
-        .binance-orders {
+        
+        .bybit-orders {
             background: #f8f9fa;
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
             font-size: 12px;
         }
-
+        
         .order-row {
             display: flex;
             justify-content: space-between;
             padding: 2px 0;
         }
-
+        
         .last-update {
             font-size: 11px;
             color: #666;
             margin-top: 5px;
         }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+            margin: 20px 0;
+        }
+        
+        h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
-
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
             <h1>💱 CALCULADORA VES → BRL</h1>
-            <p>Calculadora P2P en tiempo real</p>
+            <p>Calculadora P2P en tiempo real - Bybit</p>
         </div>
 
-        <!-- Precios Actuales -->
+        <!-- Modo Tasa Fija -->
         <div class="section">
             <div class="section-title">
-                📊 PRECIOS ACTUALES
-                <span class="status online" id="status">● ONLINE</span>
+                🌅 MODO TASA FIJA
+                <button class="reset-btn" onclick="resetAllFields()">🔄 RESET</button>
             </div>
-
+            
+            <!-- Configuración del Día -->
+            <h4>📊 Configuración del Día:</h4>
+            
             <div class="price-row">
-                <label>VES/USDT (Binance P2P):</label>
+                <label>VES/USDT (Compra):</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <input type="number" id="vesUsdt" class="price-input auto-update" value="141.93" step="0.01"
-                        oninput="calculate()">
-                    <button class="refresh-btn" id="refreshBtn" onclick="updateBinancePrice()">🔄</button>
+                    <input type="number" id="fixedVesUsdt" class="price-input auto-update" value="142.50" step="0.01" oninput="calculateFixedRate()">
+                    <button class="refresh-btn" id="refreshBtn" onclick="updateFixedRate()">🔄</button>
+                    <span class="status online" id="status">● MANUAL</span>
                 </div>
             </div>
-
-            <div class="binance-orders" id="binanceOrders" style="display: none;">
+            
+            <div class="bybit-orders" id="bybitOrders" style="display: none;">
                 <strong>Primeras 4 órdenes P2P:</strong>
                 <div id="ordersList"></div>
                 <div class="last-update" id="lastUpdate"></div>
             </div>
-
+            
             <div class="price-row">
-                <label>USDT/BRL (Tu precio):</label>
-                <input type="number" id="usdtBrl" class="price-input manual-input" value="5.52" step="0.01"
-                    oninput="calculate()">
+                <label>USDT/BRL (Venta):</label>
+                <input type="number" id="fixedUsdtBrl" class="price-input" value="5.50" step="0.01" oninput="calculateFixedRate()">
             </div>
-        </div>
-
-        <!-- Tu Ganancia -->
-        <div class="section">
-            <div class="section-title">💰 TU GANANCIA</div>
+            
             <div class="price-row">
-                <label>Margen deseado:</label>
+                <label>Tu margen:</label>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="number" id="margin" class="price-input" value="5.00" step="0.5" oninput="calculate()">
-                    <span>BRL</span>
+                    <input type="number" id="fixedMargin" class="price-input percentage-input" value="3" step="0.1" min="0" max="100" oninput="calculateFixedRate()">
+                    <span>%</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Calculadora -->
-        <div class="section">
-            <div class="section-title">🧮 CALCULADORA</div>
+            
+            <!-- Resultado Tasa Fija -->
+            <div class="fixed-rate-result">
+                <h3>🎯 TU TASA PARA PUBLICAR:</h3>
+                <div class="rate-display" id="fixedRateResult">26.85 Bs = 1.00R$</div>
+                <button class="copy-btn" onclick="copyFixedRate()">📋 COPIAR TASA</button>
+            </div>
+            
+            <hr>
+            
+            <!-- Calculadora de Operación -->
+            <h4>💰 Calculadora de Operación:</h4>
+            
             <div class="price-row">
                 <label>Cliente envía:</label>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="number" id="clientAmount" class="price-input" value="3000" step="100"
-                        oninput="calculate()">
+                    <input type="number" id="operationAmount" class="price-input" placeholder="10000" oninput="calculateOperation()">
                     <span>VES</span>
                 </div>
             </div>
-
-            <div class="calc-result" id="calcResult">
-                <div>Tú obtienes: <strong id="youGet">116.69 BRL</strong></div>
-                <div>Das al cliente: <strong id="clientGets">111.69 BRL</strong></div>
-                <div>Tu ganancia: <strong id="yourProfit">5.00 BRL</strong></div>
-            </div>
-        </div>
-
-        <!-- Tasa Final -->
-        <div class="section">
-            <div class="section-title">📋 TU TASA FINAL</div>
-            <div class="final-rate">
-                <div class="rate-display" id="finalRate">26.86 VES = 1 BRL</div>
-                <div class="format-display" id="groupFormat">26.86 Bs = 1.00R$</div>
-                <button class="copy-btn" onclick="copyToClipboard()">📋 COPIAR TASA</button>
+            
+            <div class="operation-result" id="operationResult" style="display: none;">
+                <div><strong>💵 Dólares negociados:</strong> <span id="usdNegotiated">$70.18 USD</span></div>
+                <div><strong>💚 Das al cliente:</strong> <span id="clientReceives">372.67 BRL</span></div>
+                <div><strong>🎯 Tu ganancia:</strong> <span id="yourGainVes">300 VES = $2.11 USD</span></div>
+                <button class="copy-btn secondary" onclick="copyOperation()">📋 COPIAR OPERACIÓN</button>
             </div>
         </div>
 
@@ -313,7 +337,7 @@
                 <tbody id="competitorTable">
                     <tr class="your-rate">
                         <td><strong>TU TASA</strong></td>
-                        <td><strong id="yourRateDisplay">26.86</strong></td>
+                        <td><strong id="yourRateDisplay">26.85</strong></td>
                         <td><span class="better">✅ COMPETITIVA</span></td>
                     </tr>
                     <tr>
@@ -338,55 +362,59 @@
 
     <script>
         // Variables globales
-        let vesUsdtPrice = 141.93;
-        let usdtBrlPrice = 5.52;
-        let margin = 5.00;
-        let clientAmount = 3000;
-        let lastBinanceUpdate = null;
+        let fixedVesUsdt = 142.50;
+        let fixedUsdtBrl = 5.50;
+        let fixedMargin = 3;
+        let fixedRate = 0;
 
-        // Función principal de cálculo
-        function calculate() {
-            // Obtener valores actuales
-            vesUsdtPrice = parseFloat(document.getElementById('vesUsdt').value) || 141.93;
-            usdtBrlPrice = parseFloat(document.getElementById('usdtBrl').value) || 5.52;
-            margin = parseFloat(document.getElementById('margin').value) || 5.00;
-            clientAmount = parseFloat(document.getElementById('clientAmount').value) || 3000;
-
-            // Cálculos
-            const usdtAmount = clientAmount / vesUsdtPrice;
-            const totalBrl = usdtAmount * usdtBrlPrice;
-            const clientGets = totalBrl - margin;
-            const finalRate = clientAmount / clientGets;
-
-            // Actualizar display
-            document.getElementById('youGet').textContent = `${totalBrl.toFixed(2)} BRL`;
-            document.getElementById('clientGets').textContent = `${clientGets.toFixed(2)} BRL`;
-            document.getElementById('yourProfit').textContent = `${margin.toFixed(2)} BRL`;
-            document.getElementById('finalRate').textContent = `${finalRate.toFixed(2)} VES = 1 BRL`;
-            document.getElementById('groupFormat').textContent = `${finalRate.toFixed(2)} Bs = 1.00R$`;
-            document.getElementById('yourRateDisplay').textContent = finalRate.toFixed(2);
-
-            updateCompetitorComparison(finalRate);
+        // Calcular tasa fija
+        function calculateFixedRate() {
+            fixedVesUsdt = parseFloat(document.getElementById('fixedVesUsdt').value) || 142.50;
+            fixedUsdtBrl = parseFloat(document.getElementById('fixedUsdtBrl').value) || 5.50;
+            fixedMargin = parseFloat(document.getElementById('fixedMargin').value) || 3;
+            
+            // Fórmula: VES/USDT ÷ (USDT/BRL × (1 - margen%))
+            const brlAfterMargin = fixedUsdtBrl * (1 - fixedMargin/100);
+            fixedRate = fixedVesUsdt / brlAfterMargin;
+            
+            document.getElementById('fixedRateResult').textContent = `${fixedRate.toFixed(2)} Bs = 1.00R$`;
+            document.getElementById('yourRateDisplay').textContent = fixedRate.toFixed(2);
+            
+            updateCompetitorComparison(fixedRate);
+            calculateOperation();
         }
 
-        // Función para obtener precios reales de Binance P2P
-        async function getBinanceP2PPrice() {
+        // Calcular operación específica
+        function calculateOperation() {
+            const amount = parseFloat(document.getElementById('operationAmount').value);
+            
+            if (!amount || !fixedRate) {
+                document.getElementById('operationResult').style.display = 'none';
+                return;
+            }
+            
+            // Cálculos
+            const usdTotal = amount / fixedVesUsdt;
+            const clientGets = amount / fixedRate;
+            const gainVes = amount - (clientGets / fixedUsdtBrl * fixedVesUsdt);
+            const gainUsd = gainVes / fixedVesUsdt;
+            
+            // Actualizar display
+            document.getElementById('usdNegotiated').textContent = `$${usdTotal.toFixed(2)} USD`;
+            document.getElementById('clientReceives').textContent = `${clientGets.toFixed(2)} BRL`;
+            document.getElementById('yourGainVes').textContent = `${gainVes.toFixed(0)} VES = $${gainUsd.toFixed(2)} USD`;
+            
+            document.getElementById('operationResult').style.display = 'block';
+        }
+
+        // Función para obtener precios reales de Bybit P2P
+        async function getBybitP2PPrice() {
             try {
-                const response = await fetch('/api/binance-p2p', {
+                const response = await fetch('/api/bybit-p2p', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        fiat: 'VES',
-                        page: 1,
-                        rows: 4,
-                        tradeType: 'BUY',
-                        asset: 'USDT',
-                        countries: [],
-                        proMerchantAds: false,
-                        publisherType: null
-                    })
+                    }
                 });
 
                 if (!response.ok) {
@@ -394,44 +422,44 @@
                 }
 
                 const data = await response.json();
-
+                
                 if (data.success && data.data && data.data.length > 0) {
                     const orders = data.data.slice(0, 4);
-
+                    
                     let totalValue = 0;
                     let totalVolume = 0;
-
+                    
                     orders.forEach(order => {
                         const price = parseFloat(order.adv.price);
                         const volume = parseFloat(order.adv.surplusAmount);
                         totalValue += price * volume;
                         totalVolume += volume;
                     });
-
+                    
                     const weightedAverage = totalVolume > 0 ? totalValue / totalVolume : orders[0].adv.price;
-
-                    displayBinanceOrders(orders);
-
+                    
+                    displayBybitOrders(orders);
+                    
                     return {
                         price: weightedAverage,
                         orders: orders
                     };
                 } else {
-                    throw new Error('No se encontraron órdenes en Binance P2P');
+                    throw new Error('No se encontraron órdenes en Bybit P2P');
                 }
             } catch (error) {
-                console.error('Error obteniendo precios de Binance:', error);
+                console.error('Error obteniendo precios de Bybit:', error);
                 throw error;
             }
         }
 
-        // Mostrar las órdenes de Binance
-        function displayBinanceOrders(orders) {
+        // Mostrar las órdenes de Bybit
+        function displayBybitOrders(orders) {
             const ordersList = document.getElementById('ordersList');
-            const binanceOrders = document.getElementById('binanceOrders');
-
+            const bybitOrders = document.getElementById('bybitOrders');
+            
             ordersList.innerHTML = '';
-
+            
             orders.forEach((order, index) => {
                 const orderDiv = document.createElement('div');
                 orderDiv.className = 'order-row';
@@ -441,55 +469,43 @@
                 `;
                 ordersList.appendChild(orderDiv);
             });
-
-            binanceOrders.style.display = 'block';
-
-            // Actualizar timestamp
-            document.getElementById('lastUpdate').textContent =
+            
+            bybitOrders.style.display = 'block';
+            
+            document.getElementById('lastUpdate').textContent = 
                 `Actualizado: ${new Date().toLocaleTimeString()}`;
         }
 
-        // Actualizar precio de Binance
-        async function updateBinancePrice() {
+        // Actualizar precio de Bybit para tasa fija
+        async function updateFixedRate() {
             const statusEl = document.getElementById('status');
             const refreshBtn = document.getElementById('refreshBtn');
-
-            // UI feedback
+            
             statusEl.textContent = '● OBTENIENDO...';
             statusEl.className = 'status updating';
             refreshBtn.disabled = true;
             refreshBtn.textContent = '⏳';
-
+            
             try {
-                const result = await getBinanceP2PPrice();
-
-                // Actualizar precio
-                document.getElementById('vesUsdt').value = result.price.toFixed(2);
-                vesUsdtPrice = result.price;
-
-                // UI success
+                const result = await getBybitP2PPrice();
+                
+                document.getElementById('fixedVesUsdt').value = result.price.toFixed(2);
+                
                 statusEl.textContent = '● ACTUALIZADO';
                 statusEl.className = 'status online';
-
-                lastBinanceUpdate = new Date();
-                calculate();
-
+                
+                calculateFixedRate();
+                
             } catch (error) {
-                // UI error
                 statusEl.textContent = '● ERROR';
                 statusEl.className = 'status error';
-
-                // Fallback: usar precio anterior o manual
+                
                 console.warn('Usando precio manual por error en API:', error.message);
-
-                // Ocultar órdenes si hay error
-                document.getElementById('binanceOrders').style.display = 'none';
+                document.getElementById('bybitOrders').style.display = 'none';
             } finally {
-                // Restaurar botón
                 refreshBtn.disabled = false;
                 refreshBtn.textContent = '🔄';
-
-                // Volver a online después de 3 segundos si hubo error
+                
                 setTimeout(() => {
                     if (statusEl.className.includes('error')) {
                         statusEl.textContent = '● MANUAL';
@@ -499,6 +515,20 @@
             }
         }
 
+        // Reset todos los campos
+        function resetAllFields() {
+            document.getElementById('fixedVesUsdt').value = '';
+            document.getElementById('fixedUsdtBrl').value = '';
+            document.getElementById('fixedMargin').value = '';
+            document.getElementById('operationAmount').value = '';
+            document.getElementById('bybitOrders').style.display = 'none';
+            document.getElementById('operationResult').style.display = 'none';
+            document.getElementById('status').textContent = '● MANUAL';
+            document.getElementById('status').className = 'status updating';
+            document.getElementById('fixedRateResult').textContent = '-- Bs = 1.00R$';
+            document.getElementById('yourRateDisplay').textContent = '--';
+        }
+
         // Actualizar comparación con competencia
         function updateCompetitorComparison(yourRate) {
             const competitors = [
@@ -506,16 +536,16 @@
                 { name: 'Grupo B', rate: 26.20 },
                 { name: 'Grupo C', rate: 28.00 }
             ];
-
+            
             const tbody = document.getElementById('competitorTable');
             const rows = tbody.querySelectorAll('tr:not(.your-rate)');
-
+            
             rows.forEach((row, index) => {
                 const competitor = competitors[index];
                 if (competitor) {
                     const cells = row.querySelectorAll('td');
                     const statusCell = cells[2];
-
+                    
                     if (yourRate < competitor.rate) {
                         statusCell.innerHTML = '<span class="better">📉 Más barata</span>';
                     } else if (yourRate > competitor.rate) {
@@ -527,48 +557,70 @@
             });
         }
 
-        // Copiar al clipboard
-        function copyToClipboard() {
-            const formatText = document.getElementById('groupFormat').textContent;
+        // 1. Copiar tasa fija
+        function copyFixedRate() {
+            const text = document.getElementById('fixedRateResult').textContent;
+            copyText(text);
+        }
 
+        // 2. Copiar operación completa
+        function copyOperation() {
+            const amount = document.getElementById('operationAmount').value;
+            const usd = document.getElementById('usdNegotiated').textContent;
+            const client = document.getElementById('clientReceives').textContent;
+            const gain = document.getElementById('yourGainVes').textContent;
+            
+            const text = `Cliente: ${amount} VES
+Recibe: ${client}
+Dólares: ${usd}
+Mi ganancia: ${gain}`;
+            
+            copyText(text);
+        }
+
+        // Función auxiliar para copiar
+        function copyText(text) {
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(formatText).then(() => {
-                    const btn = document.querySelector('.copy-btn');
-                    const originalText = btn.textContent;
-                    btn.textContent = '✅ COPIADO!';
-                    btn.style.background = '#4CAF50';
-
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#ff6b6b';
-                    }, 2000);
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess();
                 });
             } else {
-                // Fallback para navegadores antiguos
                 const textArea = document.createElement('textarea');
-                textArea.value = formatText;
+                textArea.value = text;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-
-                alert('Tasa copiada al clipboard!');
+                showCopySuccess();
             }
         }
 
-        // Auto-actualización cada 2 minutos
+        // Mostrar éxito al copiar
+        function showCopySuccess() {
+            const btns = document.querySelectorAll('.copy-btn');
+            btns.forEach(btn => {
+                const originalText = btn.textContent;
+                btn.textContent = '✅ COPIADO!';
+                btn.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    if (btn.classList.contains('secondary')) {
+                        btn.style.background = '#2196F3';
+                    } else {
+                        btn.style.background = '#ff6b6b';
+                    }
+                }, 2000);
+            });
+        }
+
+        // Auto-actualización cada 5 minutos
         setInterval(() => {
-            updateBinancePrice();
-        }, 120000); // 2 minutos
+            updateFixedRate();
+        }, 300000);
 
         // Cálculo inicial
-        calculate();
-
-        // Actualización inicial de Binance al cargar
-        setTimeout(() => {
-            updateBinancePrice();
-        }, 1000);
+        calculateFixedRate();
     </script>
 </body>
-
 </html>
