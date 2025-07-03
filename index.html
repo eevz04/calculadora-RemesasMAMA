@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora VES → BRL | P2P</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segura UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .price-input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 120px;
+            text-align: center;
+        }
+        
+        .auto-update {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }
+        
+        .manual-input {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+        
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .calc-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .final-rate {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .rate-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .format-display {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        .copy-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #ff5252;
+        }
+        
+        .competitor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .competitor-table th,
+        .competitor-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .competitor-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .your-rate {
+            background: #e8f5e8 !important;
+            font-weight: bold;
+        }
+        
+        .better {
+            color: #4CAF50;
+        }
+        
+        .worse {
+            color: #f44336;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .online {
+            background: #e8f5e8;
+            color: #4CAF50;
+        }
+        
+        .updating {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💱 CALCULADORA VES → BRL</h1>
+            <p>Calculadora P2P en tiempo real</p>
+        </div>
+
+        <!-- Precios Actuales -->
+        <div class="section">
+            <div class="section-title">
+                📊 PRECIOS ACTUALES
+                <span class="status online" id="status">● ONLINE</span>
+            </div>
+            
+            <div class="price-row">
+                <label>VES/USDT (Binance):</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="vesUsdt" class="price-input auto-update" value="141.93" step="0.01">
+                    <button class="refresh-btn" onclick="updateBinancePrice()">🔄</button>
+                </div>
+            </div>
+            
+            <div class="price-row">
+                <label>USDT/BRL (Tu precio):</label>
+                <input type="number" id="usdtBrl" class="price-input manual-input" value="5.52" step="0.01" oninput="calculate()">
+            </div>
+        </div>
+
+        <!-- Tu Ganancia -->
+        <div class="section">
+            <div class="section-title">💰 TU GANANCIA</div>
+            <div class="price-row">
+                <label>Margen deseado:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="number" id="margin" class="price-input" value="5.00" step="0.5" oninput="calculate()">
+                    <span>BRL</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora -->
+        <div class="section">
+            <div class="section-title">🧮 CALCULADORA</div>
+            <div class="price-row">
+                <label>Cliente envía:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="number" id="clientAmount" class="price-input" value="3000" step="100" oninput="calculate()">
+                    <span>VES</span>
+                </div>
+            </div>
+            
+            <div class="calc-result" id="calcResult">
+                <div>Tú obtienes: <strong id="youGet">116.69 BRL</strong></div>
+                <div>Das al cliente: <strong id="clientGets">111.69 BRL</strong></div>
+                <div>Tu ganancia: <strong id="yourProfit">5.00 BRL</strong></div>
+            </div>
+        </div>
+
+        <!-- Tasa Final -->
+        <div class="section">
+            <div class="section-title">📋 TU TASA FINAL</div>
+            <div class="final-rate">
+                <div class="rate-display" id="finalRate">26.86 VES = 1 BRL</div>
+                <div class="format-display" id="groupFormat">26.86 Bs = 1.00R$</div>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 COPIAR TASA</button>
+            </div>
+        </div>
+
+        <!-- Comparador -->
+        <div class="section">
+            <div class="section-title">⚔️ COMPARADOR CON COMPETENCIA</div>
+            <table class="competitor-table">
+                <thead>
+                    <tr>
+                        <th>Operador</th>
+                        <th>Tasa (VES/BRL)</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="competitorTable">
+                    <tr class="your-rate">
+                        <td><strong>TU TASA</strong></td>
+                        <td><strong id="yourRateDisplay">26.86</strong></td>
+                        <td><span class="better">✅ COMPETITIVA</span></td>
+                    </tr>
+                    <tr>
+                        <td>Grupo A</td>
+                        <td>27.50</td>
+                        <td><span class="worse">📈 Más cara</span></td>
+                    </tr>
+                    <tr>
+                        <td>Grupo B</td>
+                        <td>26.20</td>
+                        <td><span class="better">📉 Más barata</span></td>
+                    </tr>
+                    <tr>
+                        <td>Grupo C</td>
+                        <td>28.00</td>
+                        <td><span class="worse">📈 Más cara</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let vesUsdtPrice = 141.93;
+        let usdtBrlPrice = 5.52;
+        let margin = 5.00;
+        let clientAmount = 3000;
+
+        // Función principal de cálculo
+        function calculate() {
+            // Obtener valores actuales
+            vesUsdtPrice = parseFloat(document.getElementById('vesUsdt').value) || 141.93;
+            usdtBrlPrice = parseFloat(document.getElementById('usdtBrl').value) || 5.52;
+            margin = parseFloat(document.getElementById('margin').value) || 5.00;
+            clientAmount = parseFloat(document.getElementById('clientAmount').value) || 3000;
+
+            // Cálculos
+            const usdtAmount = clientAmount / vesUsdtPrice;
+            const totalBrl = usdtAmount * usdtBrlPrice;
+            const clientGets = totalBrl - margin;
+            const finalRate = clientAmount / clientGets;
+
+            // Actualizar display
+            document.getElementById('youGet').textContent = `${totalBrl.toFixed(2)} BRL`;
+            document.getElementById('clientGets').textContent = `${clientGets.toFixed(2)} BRL`;
+            document.getElementById('yourProfit').textContent = `${margin.toFixed(2)} BRL`;
+            document.getElementById('finalRate').textContent = `${finalRate.toFixed(2)} VES = 1 BRL`;
+            document.getElementById('groupFormat').textContent = `${finalRate.toFixed(2)} Bs = 1.00R$`;
+            document.getElementById('yourRateDisplay').textContent = finalRate.toFixed(2);
+        }
+
+        // Actualizar precio de Binance (simulado)
+        function updateBinancePrice() {
+            document.getElementById('status').textContent = '● ACTUALIZANDO...';
+            document.getElementById('status').className = 'status updating';
+            
+            // Simular llamada a API (en producción, aquí irían las llamadas reales)
+            setTimeout(() => {
+                // Simulación de fluctuación de precio ±2%
+                const fluctuation = (Math.random() - 0.5) * 0.04;
+                const newPrice = vesUsdtPrice * (1 + fluctuation);
+                
+                document.getElementById('vesUsdt').value = newPrice.toFixed(2);
+                document.getElementById('status').textContent = '● ONLINE';
+                document.getElementById('status').className = 'status online';
+                
+                calculate();
+            }, 1500);
+        }
+
+        // Copiar al clipboard
+        function copyToClipboard() {
+            const formatText = document.getElementById('groupFormat').textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(formatText).then(() => {
+                    const btn = document.querySelector('.copy-btn');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✅ COPIADO!';
+                    btn.style.background = '#4CAF50';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#ff6b6b';
+                    }, 2000);
+                });
+            } else {
+                // Fallback para navegadores antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = formatText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                alert('Tasa copiada al clipboard!');
+            }
+        }
+
+        // Auto-actualización cada 30 segundos
+        setInterval(() => {
+            updateBinancePrice();
+        }, 30000);
+
+        // Cálculo inicial
+        calculate();
+    </script>
+</body>
+</html>
