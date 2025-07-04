@@ -845,7 +845,7 @@
                             callback_data: `accept_${operationId}`
                         },
                         {
-                            text: "❌ RECHAZADA", 
+                            text: "❌ RECHAZADA",
                             callback_data: `reject_${operationId}`
                         }
                     ]
@@ -868,96 +868,92 @@
 
                 if (result.success) {
                     alert('✅ Enviado a Telegram con botones clickeables!');
-                    // Ya no mostramos los botones en la web porque están en Telegram
-                    document.getElementById(`${tab}Confirmation`).style.display = 'none';
+                    // Ocultar confirmación solo si el elemento existe
+                    const confirmationEl = document.getElementById(`${tab}Confirmation`);
+                    if (confirmationEl) {
+                        confirmationEl.style.display = 'none';
+                    }
                 } else {
                     alert('❌ Error enviando a Telegram: ' + (result.error || 'Error desconocido'));
                 }
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
-        }
+                async function confirmDeal(tab, status) {
+                    const clientName = document.getElementById(`${tab}ClientName`).value;
 
-        // 🗑️ Esta función ya no se usa - los botones están en Telegram
-        // Pero la mantenemos por si acaso
-        async function confirmDeal(tab, status) {
-            const clientName = document.getElementById(`${tab}ClientName`).value;
-
-            const message = `<b>📋 CONFIRMACIÓN</b>
+                    const message = `<b>📋 CONFIRMACIÓN</b>
 <b>Estado:</b> ${status}
 <b>Cliente:</b> ${clientName || 'Sin nombre'}
 <b>Tipo:</b> ${tab === 'ves-brl' ? 'VES → BRL' : 'BRL → VES'}
 <b>Hora:</b> ${new Date().toLocaleString()}`;
 
-            try {
-                const response = await fetch('/api/send-telegram', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: message,
-                        botToken: TELEGRAM_CONFIG.botToken,
-                        chatId: TELEGRAM_CONFIG.chatId
-                    })
-                });
+                    try {
+                        const response = await fetch('/api/send-telegram', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                message: message,
+                                botToken: TELEGRAM_CONFIG.botToken,
+                                chatId: TELEGRAM_CONFIG.chatId
+                            })
+                        });
 
-                const result = await response.json();
+                        const result = await response.json();
 
-                if (result.success) {
-                    alert(`✅ Negociación marcada como ${status}`);
-                    document.getElementById(`${tab}Confirmation`).style.display = 'none';
-                } else {
-                    alert('❌ Error enviando confirmación: ' + (result.error || 'Error desconocido'));
+                        if (result.success) {
+                            alert(`✅ Negociación marcada como ${status}`);
+                            document.getElementById(`${tab}Confirmation`).style.display = 'none';
+                        } else {
+                            alert('❌ Error enviando confirmación: ' + (result.error || 'Error desconocido'));
+                        }
+                    } catch (error) {
+                        console.error('Error confirmando:', error);
+                        alert('❌ Error confirmando: ' + error.message);
+                    }
                 }
-            } catch (error) {
-                console.error('Error confirmando:', error);
-                alert('❌ Error confirmando: ' + error.message);
-            }
-        }
 
-        // Copiar al clipboard
-        function copyToClipboard(text) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess();
+                // Copiar al clipboard
+                function copyToClipboard(text) {
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            showCopySuccess();
+                        });
+                    } else {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        showCopySuccess();
+                    }
+                }
+
+                // Mostrar éxito al copiar
+                function showCopySuccess() {
+                    const btns = document.querySelectorAll('.copy-btn');
+                    btns.forEach(btn => {
+                        const originalText = btn.textContent;
+                        btn.textContent = '✅ COPIADO!';
+                        btn.style.background = '#4CAF50';
+
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = '#ff6b6b';
+                        }, 2000);
+                    });
+                }
+
+                // Auto-actualización cada 5 minutos
+                setInterval(() => {
+                    if (currentTab === 'ves-brl') {
+                        updateBybitPrice();
+                    } else {
+                        updateBinancePrice();
+                    }
+                }, 300000);
+
+                // Cálculos iniciales al cargar la página
+                document.addEventListener('DOMContentLoaded', function () {
+                    calculateVesBrl();
+                    calculateBrlVes();
                 });
-            } else {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess();
-            }
-        }
-
-        // Mostrar éxito al copiar
-        function showCopySuccess() {
-            const btns = document.querySelectorAll('.copy-btn');
-            btns.forEach(btn => {
-                const originalText = btn.textContent;
-                btn.textContent = '✅ COPIADO!';
-                btn.style.background = '#4CAF50';
-
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#ff6b6b';
-                }, 2000);
-            });
-        }
-
-        // Auto-actualización cada 5 minutos
-        setInterval(() => {
-            if (currentTab === 'ves-brl') {
-                updateBybitPrice();
-            } else {
-                updateBinancePrice();
-            }
-        }, 300000);
-
-        // Cálculos iniciales al cargar la página
-        document.addEventListener('DOMContentLoaded', function () {
-            calculateVesBrl();
-            calculateBrlVes();
-        });
-</script>
+    </script>
