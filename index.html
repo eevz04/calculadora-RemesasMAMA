@@ -603,6 +603,60 @@
             document.getElementById('brlVesResult').style.display = 'block';
         }
 
+        // 🆕 NUEVA FUNCIÓN: Obtener órdenes BRL/USDT desde Binance
+        async function getBinanceBRLOrders() {
+            try {
+                const response = await fetch('/api/binance-p2p', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fiat: 'BRL',           // Para BRL/USDT
+                        page: 1,
+                        rows: 4,
+                        tradeType: 'SELL',     // Vendedores de USDT por BRL (para que tú compres)
+                        asset: 'USDT',
+                        countries: [],
+                        proMerchantAds: false,
+                        publisherType: null
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data && data.data.length > 0) {
+                    const orders = data.data.slice(0, 4);
+
+                    let totalValue = 0;
+                    let totalVolume = 0;
+
+                    orders.forEach(order => {
+                        const price = parseFloat(order.adv.price);
+                        const volume = parseFloat(order.adv.surplusAmount);
+                        totalValue += price * volume;
+                        totalVolume += volume;
+                    });
+
+                    const weightedAverage = totalVolume > 0 ? totalValue / totalVolume : orders[0].adv.price;
+
+                    return {
+                        price: weightedAverage,
+                        orders: orders
+                    };
+                } else {
+                    throw new Error('No se encontraron órdenes BRL/USDT en Binance P2P');
+                }
+            } catch (error) {
+                console.error('Error obteniendo órdenes BRL/USDT de Binance:', error);
+                throw error;
+            }
+        }
+
         // Actualizar Bybit (VES/USDT) - USA TU ENDPOINT
         async function updateBybitPrice() {
             const statusEl = document.getElementById('statusVesBrl');
@@ -651,6 +705,7 @@
         }
 
         // Actualizar Binance (BRL/USDT) - USA TU ENDPOINT
+        // 🔄 ACTUALIZADA: Solo para mostrar órdenes BRL/USDT de Binance
         async function updateBinancePrice() {
             const statusEl = document.getElementById('statusBrlVes');
 
@@ -658,42 +713,23 @@
             statusEl.className = 'status updating';
 
             try {
-                const response = await fetch('/api/binance-p2p', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
+                // Obtener órdenes BRL/USDT de Binance
+                const result = await getBinanceBRLOrders();
 
-                const data = await response.json();
+                // Actualizar precio automáticamente
+                document.getElementById('brlVesBrlUsdt').value = result.price.toFixed(2);
 
-                if (data.success && data.data && data.data.length > 0) {
-                    const orders = data.data.slice(0, 4);
+                // Mostrar las órdenes (esto es lo nuevo que necesitas ver)
+                displayOrders('binance', result.orders);
 
-                    let totalValue = 0;
-                    let totalVolume = 0;
+                statusEl.textContent = '● ACTUALIZADO';
+                statusEl.className = 'status online';
 
-                    orders.forEach(order => {
-                        const price = parseFloat(order.adv.price);
-                        const volume = parseFloat(order.adv.surplusAmount);
-                        totalValue += price * volume;
-                        totalVolume += volume;
-                    });
-
-                    const weightedAverage = totalVolume > 0 ? totalValue / totalVolume : orders[0].adv.price;
-
-                    document.getElementById('brlVesBrlUsdt').value = weightedAverage.toFixed(2);
-                    displayOrders('binance', orders);
-
-                    statusEl.textContent = '● ACTUALIZADO';
-                    statusEl.className = 'status online';
-
-                    calculateBrlVes();
-                } else {
-                    throw new Error('No se encontraron órdenes');
-                }
+                calculateBrlVes();
             } catch (error) {
                 statusEl.textContent = '● ERROR';
                 statusEl.className = 'status error';
-                console.error('Error Binance:', error);
+                console.error('Error Binance BRL/USDT:', error);
             }
         }
 
@@ -805,6 +841,7 @@
 
             try {
                 // Usar tu endpoint /api/send-telegram
+                // ...resto de tu código...
                 const response = await fetch('/api/send-telegram', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
