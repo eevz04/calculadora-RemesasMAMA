@@ -867,14 +867,14 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('✅ Enviado a Telegram con botones clickeables!');
+                    alert(`✅ Negociación marcada como ${status}`);
                     // Ocultar confirmación solo si el elemento existe
                     const confirmationEl = document.getElementById(`${tab}Confirmation`);
                     if (confirmationEl) {
                         confirmationEl.style.display = 'none';
                     }
                 } else {
-                    alert('❌ Error enviando a Telegram: ' + (result.error || 'Error desconocido'));
+                    alert('❌ Error enviando confirmación: ' + (result.error || 'Error desconocido'));
                 }
                 async function confirmDeal(tab, status) {
                     const clientName = document.getElementById(`${tab}ClientName`).value;
@@ -900,7 +900,11 @@
 
                         if (result.success) {
                             alert(`✅ Negociación marcada como ${status}`);
-                            document.getElementById(`${tab}Confirmation`).style.display = 'none';
+                            // Ocultar confirmación solo si el elemento existe
+                            const confirmationEl = document.getElementById(`${tab}Confirmation`);
+                            if (confirmationEl) {
+                                confirmationEl.style.display = 'none';
+                            }
                         } else {
                             alert('❌ Error enviando confirmación: ' + (result.error || 'Error desconocido'));
                         }
