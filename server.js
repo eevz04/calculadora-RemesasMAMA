@@ -143,10 +143,10 @@ app.post('/api/binance-p2p', async (req, res) => {
     }
 });
 
-// Enviar a Telegram
+// 🆕 ACTUALIZADO: Enviar a Telegram con botones clickeables
 app.post('/api/send-telegram', async (req, res) => {
     try {
-        const { message, botToken, chatId } = req.body;
+        const { message, botToken, chatId, keyboard } = req.body;
         
         if (!botToken || !chatId) {
             return res.status(400).json({ error: 'Bot token y chat ID son requeridos' });
@@ -154,35 +154,133 @@ app.post('/api/send-telegram', async (req, res) => {
 
         const fetch = (await import('node-fetch')).default;
         
+        const payload = {
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+        };
+
+        // 🆕 Agregar botones inline si se proporcionan
+        if (keyboard) {
+            payload.reply_markup = keyboard;
+        }
+        
         const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message,
-                parse_mode: 'HTML'
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
         
         if (data.ok) {
-            res.json({ success: true, message: 'Mensaje enviado a Telegram' });
+            res.json({ success: true, message: 'Mensaje enviado a Telegram', data: data });
         } else {
-            res.status(400).json({ error: 'Error enviando a Telegram', details: data });
+            res.status(400).json({ success: false, error: 'Error enviando a Telegram', details: data });
         }
         
     } catch (error) {
         console.error('Error sending to Telegram:', error);
         res.status(500).json({ 
+            success: false,
             error: 'Error sending to Telegram',
             message: error.message 
         });
     }
 });
 
+// 🆕 NUEVO: Webhook para manejar clicks en botones de Telegram
+app.post('/api/telegram-webhook', async (req, res) => {
+    try {
+        const { callback_query } = req.body;
+        
+        if (callback_query) {
+            const data = callback_query.data;
+            const messageId = callback_query.message.message_id;
+            const chatId = callback_query.message.chat.id;
+            const originalText = callback_query.message.text;
+            
+            let status = '';
+            let emoji = '';
+            
+            if (data.startsWith('accept_')) {
+                status = 'ACEPTADA';
+                emoji = '✅';
+            } else if (data.startsWith('reject_')) {
+                status = 'RECHAZADA';
+                emoji = '❌';
+            }
+            
+            // Actualizar el mensaje original reemplazando "PENDIENTE" con el estado final
+            const updatedText = originalText.replace('⏳ PENDIENTE', `${emoji} ${status}`);
+            
+            const fetch = (await import('node-fetch')).default;
+            
+            // Editar el mensaje para mostrar el estado y quitar los botones
+            await fetch(`https://api.telegram.org/bot7582146029:AAFlsM6Pvr7sz06JIayhroy6TcCy4tFQfnk/editMessageText`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    message_id: messageId,
+                    text: updatedText,
+                    parse_mode: 'HTML',
+                    reply_markup: { inline_keyboard: [] } // Quitar botones
+                })
+            });
+            
+            // Responder al callback para quitar el "loading" del botón
+            await fetch(`https://api.telegram.org/bot7582146029:AAFlsM6Pvr7sz06JIayhroy6TcCy4tFQfnk/answerCallbackQuery`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    callback_query_id: callback_query.id,
+                    text: `Operación marcada como ${status}`,
+                    show_alert: false
+                })
+            });
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error en webhook:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// 🆕 NUEVO: Endpoint para configurar webhook (ejecutar una sola vez)
+app.get('/setup-webhook', async (req, res) => {
+    try {
+        const webhookUrl = `https://${req.get('host')}/api/telegram-webhook`;
+        
+        const fetch = (await import('node-fetch')).default;
+        
+        const response = await fetch(`https://api.telegram.org/bot7582146029:AAFlsM6Pvr7sz06JIayhroy6TcCy4tFQfnk/setWebhook`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                url: webhookUrl
+            })
+        });
+        
+        const result = await response.json();
+        
+        res.json({
+            success: result.ok,
+            webhook_url: webhookUrl,
+            telegram_response: result
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Webhook URL will be: https://your-app.railway.app/api/telegram-webhook`);
 });
