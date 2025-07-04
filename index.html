@@ -603,7 +603,7 @@
             document.getElementById('brlVesResult').style.display = 'block';
         }
 
-        // 🆕 NUEVA FUNCIÓN: Obtener órdenes BRL/USDT desde Binance
+        // Obtener órdenes BRL/USDT desde Binance
         async function getBinanceBRLOrders() {
             try {
                 const response = await fetch('/api/binance-p2p', {
@@ -612,10 +612,10 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        fiat: 'BRL',           // Para BRL/USDT
+                        fiat: 'BRL',
                         page: 1,
                         rows: 4,
-                        tradeType: 'SELL',     // Vendedores de USDT por BRL (para que tú compres)
+                        tradeType: 'SELL',
                         asset: 'USDT',
                         countries: [],
                         proMerchantAds: false,
@@ -657,7 +657,7 @@
             }
         }
 
-        // Actualizar Bybit (VES/USDT) - USA TU ENDPOINT
+        // Actualizar Bybit (VES/USDT)
         async function updateBybitPrice() {
             const statusEl = document.getElementById('statusVesBrl');
 
@@ -704,8 +704,7 @@
             }
         }
 
-        // Actualizar Binance (BRL/USDT) - USA TU ENDPOINT
-        // 🔄 ACTUALIZADA: Solo para mostrar órdenes BRL/USDT de Binance
+        // Actualizar Binance (BRL/USDT)
         async function updateBinancePrice() {
             const statusEl = document.getElementById('statusBrlVes');
 
@@ -713,13 +712,8 @@
             statusEl.className = 'status updating';
 
             try {
-                // Obtener órdenes BRL/USDT de Binance
                 const result = await getBinanceBRLOrders();
-
-                // Actualizar precio automáticamente
                 document.getElementById('brlVesBrlUsdt').value = result.price.toFixed(2);
-
-                // Mostrar las órdenes (esto es lo nuevo que necesitas ver)
                 displayOrders('binance', result.orders);
 
                 statusEl.textContent = '● ACTUALIZADO';
@@ -791,9 +785,10 @@
             copyToClipboard(text);
         }
 
-        // Enviar a Telegram - USA TU ENDPOINT /api/send-telegram
+        // 🆕 FUNCIÓN ACTUALIZADA: Enviar a Telegram con botones clickeables
         async function sendToTelegram(tab) {
             let message;
+            let operationId = `${tab}_${Date.now()}`; // ID único para cada operación
 
             if (tab === 'ves-brl') {
                 const rate = document.getElementById('vesBrlRate').textContent;
@@ -815,6 +810,7 @@
 <b>Dólares:</b> ${usd}
 <b>Mi ganancia:</b> ${gain}
 <b>Cliente:</b> ${clientName || 'Sin nombre'}
+<b>Estado:</b> ⏳ PENDIENTE
 <i>📅 ${new Date().toLocaleString()}</i>`;
             } else {
                 const rate = document.getElementById('brlVesRate').textContent;
@@ -836,26 +832,44 @@
 <b>Dólares:</b> ${usd}
 <b>Mi ganancia:</b> ${gain}
 <b>Cliente:</b> ${clientName || 'Sin nombre'}
+<b>Estado:</b> ⏳ PENDIENTE
 <i>📅 ${new Date().toLocaleString()}</i>`;
             }
 
+            // Crear botones inline para Telegram
+            const keyboard = {
+                inline_keyboard: [
+                    [
+                        {
+                            text: "✅ ACEPTADA",
+                            callback_data: `accept_${operationId}`
+                        },
+                        {
+                            text: "❌ RECHAZADA", 
+                            callback_data: `reject_${operationId}`
+                        }
+                    ]
+                ]
+            };
+
             try {
-                // Usar tu endpoint /api/send-telegram
                 const response = await fetch('/api/send-telegram', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: message,
                         botToken: TELEGRAM_CONFIG.botToken,
-                        chatId: TELEGRAM_CONFIG.chatId
+                        chatId: TELEGRAM_CONFIG.chatId,
+                        keyboard: keyboard
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('✅ Enviado a Telegram!');
-                    document.getElementById(`${tab}Confirmation`).style.display = 'block';
+                    alert('✅ Enviado a Telegram con botones clickeables!');
+                    // Ya no mostramos los botones en la web porque están en Telegram
+                    document.getElementById(`${tab}Confirmation`).style.display = 'none';
                 } else {
                     alert('❌ Error enviando a Telegram: ' + (result.error || 'Error desconocido'));
                 }
@@ -864,7 +878,8 @@
             }
         }
 
-        // Confirmar negociación
+        // 🗑️ Esta función ya no se usa - los botones están en Telegram
+        // Pero la mantenemos por si acaso
         async function confirmDeal(tab, status) {
             const clientName = document.getElementById(`${tab}ClientName`).value;
 
@@ -875,7 +890,6 @@
 <b>Hora:</b> ${new Date().toLocaleString()}`;
 
             try {
-                // Usar tu endpoint /api/send-telegram
                 const response = await fetch('/api/send-telegram', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -946,7 +960,4 @@
             calculateVesBrl();
             calculateBrlVes();
         });
-    </script>
-</body>
-
-</html>
+</script>
