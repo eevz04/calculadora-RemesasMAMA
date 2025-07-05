@@ -574,10 +574,12 @@
             brlVesData.margin = parseFloat(document.getElementById('brlVesMargin').value) || 3;
             brlVesData.usdRate = brlVesData.brlUsdt;
 
-            const vesAfterMargin = brlVesData.usdtVes * (1 - brlVesData.margin / 100);
-            brlVesData.rate = brlVesData.brlUsdt / vesAfterMargin;
+            // ✅ FÓRMULA CORREGIDA
+            const brlAfterMargin = brlVesData.brlUsdt * (1 - brlVesData.margin / 100);
+            brlVesData.rate = brlVesData.usdtVes / brlAfterMargin;
 
-            document.getElementById('brlVesRate').textContent = `${brlVesData.rate.toFixed(4)} R$ = 1.00Bs`;
+            // ✅ FORMATO CORREGIDO: XX.XX Bs = 1.00R$
+            document.getElementById('brlVesRate').textContent = `${brlVesData.rate.toFixed(2)} Bs = 1.00R$`;
 
             calculateBrlVesOperation();
         }
@@ -603,7 +605,7 @@
             document.getElementById('brlVesResult').style.display = 'block';
         }
 
-        // Obtener órdenes BRL/USDT desde Binance
+        // Obtener órdenes BRL/USDT desde Binance - SOLO BRASIL
         async function getBinanceBRLOrders() {
             try {
                 const response = await fetch('/api/binance-p2p', {
@@ -614,10 +616,10 @@
                     body: JSON.stringify({
                         fiat: 'BRL',
                         page: 1,
-                        rows: 4,
-                        tradeType: 'SELL',
+                        rows: 4, // Solo 4 órdenes de referencia
+                        tradeType: 'SELL', // Vendedores de USDT por BRL
                         asset: 'USDT',
-                        countries: [],
+                        countries: ['BR'], // ✅ SOLO BRASIL
                         proMerchantAds: false,
                         publisherType: null
                     })
@@ -649,10 +651,10 @@
                         orders: orders
                     };
                 } else {
-                    throw new Error('No se encontraron órdenes BRL/USDT en Binance P2P');
+                    throw new Error('No se encontraron órdenes BRL/USDT en Brasil');
                 }
             } catch (error) {
-                console.error('Error obteniendo órdenes BRL/USDT de Binance:', error);
+                console.error('Error obteniendo órdenes BRL/USDT de Brasil:', error);
                 throw error;
             }
         }
